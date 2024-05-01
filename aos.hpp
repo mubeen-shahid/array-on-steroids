@@ -17,11 +17,37 @@ public:
 		for (size_t i = 0; i < nSize; ++i) data[i] = (arrType*)malloc(sizeof(arrType));
 	}
 
-	void suicide() { for (size_t i = 0; i < size; ++i) free(data[i]); }
+	void resize(size_t nSize)
+	{
+		if (nSize != size)
+		{
+			arrType* newData = arrType*realloc(data, sizeof(arrType) * nSize);
+			if (newData) //realloc succeded!! :)
+			{
+				if (nSize > size) for (size_t i = size; i < nSize; ++i) newData[i] = arrType();
+				data = newData;
+				size = nSize;
+			}
+			else std::cout << "[ | AOS-LOG ]: AOS::resize(size_t) failed, keeping old array.\n"; //if failed :(
+		}
+	}
 
-	size_t size() { return size; }
+	void suicide()
+	{
+		for (size_t i = 0; i < size; ++i) free(data[i]);
+		free(data);
+	}
+
+	size_t getSize() { return size; }
 
 	AOS(size_t nSize) { init(nSize); };
 	AOS() {} ;
 	~AOS() { suicide(); }
+
+	AOS& operator[](const size_t& index) { return this->data[index]; }
+	AOS& operator=(const AOS& individual)
+	{
+		this->data = individual.data;
+		this->size = size;
+	}
 };
