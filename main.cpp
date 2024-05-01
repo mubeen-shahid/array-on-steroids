@@ -4,7 +4,8 @@
 
 int main()
 {
-	AOS<AOS<int>> myArray(10); //create two-dimensional array with the data-type of int
+	AOS<AOS<int>> myArray(5); //create two-dimensional array with the data-type of int
+	//myArray.resize(10); //arrays can be resized. Appearently doesn't work. Why? Because I told ChatGPT to write the function.
 
 	{ //bracets cuz var "aSize" is tmp 
 		const size_t aSize = myArray.getSize(); // aSize = array size
@@ -19,6 +20,8 @@ int main()
 			std::cout << "\n--------------------\n";
 		}
 	}
+	
+	myArray.suicide();
 
 	return 0;
 }
