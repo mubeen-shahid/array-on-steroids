@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <malloc.h>
+#include <iostream>
 
 template <typename arrType>
 class AOS //AOS = array on steroids
@@ -14,14 +15,13 @@ public:
 	{
 		size = nSize;
 		data = (arrType*)malloc(sizeof(arrType) * nSize);
-		for (size_t i = 0; i < nSize; ++i) data[i] = (arrType*)malloc(sizeof(arrType));
 	}
 
 	void resize(size_t nSize)
 	{
 		if (nSize != size)
 		{
-			arrType* newData = arrType*realloc(data, sizeof(arrType) * nSize);
+			arrType* newData = (arrType*)realloc(data, sizeof(arrType) * nSize);
 			if (newData) //realloc succeded!! :)
 			{
 				if (nSize > size) for (size_t i = size; i < nSize; ++i) newData[i] = arrType();
@@ -34,8 +34,8 @@ public:
 
 	void suicide()
 	{
-		for (size_t i = 0; i < size; ++i) free(data[i]);
 		free(data);
+		data = nullptr;
 	}
 
 	size_t getSize() { return size; }
@@ -44,10 +44,5 @@ public:
 	AOS() {} ;
 	~AOS() { suicide(); }
 
-	AOS& operator[](const size_t& index) { return this->data[index]; }
-	AOS& operator=(const AOS& individual)
-	{
-		this->data = individual.data;
-		this->size = size;
-	}
+	arrType &operator[](const size_t& index) { return this->data[index]; }
 };
