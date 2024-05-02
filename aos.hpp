@@ -11,21 +11,21 @@ private:
 public:
 	arrType* data;
 
-	void init(size_t nSize)
+	void init(size_t& nSize)
 	{
 		vsize = nSize;
 		data = (arrType*)malloc(sizeof(arrType) * nSize);
 		for (size_t i = 0; i < nSize; ++i) data[i] = arrType(NULL);
 	}
 
-	void init(size_t nSize, arrType defaultVal)
+	void init(size_t& nSize, arrType defaultVal)
 	{
 		vsize = nSize;
 		data = (arrType*)malloc(sizeof(arrType) * nSize);
 		for (size_t i = 0; i < nSize; ++i) data[i] = arrType(defaultVal);
 	}
 
-	void resize(size_t nSize)
+	void resize(size_t& nSize)
 	{
 		if (nSize != vsize)
 		{
@@ -48,9 +48,10 @@ public:
 
 	size_t size() { return vsize; }
 
-	AOS(size_t nSize) { init(nSize); };
+	AOS(size_t& nSize) { init(nSize); };
+	AOS(size_t& nSize, size_t& defaultVal) { init(nSize , defaultVal); };
 	AOS() {} ;
 	~AOS() { suicide(); }
 
-	arrType &operator[](const size_t& index) { return this->data[index]; }
+	arrType& operator[](const size_t& index) { return this->data[index]; }
 };
