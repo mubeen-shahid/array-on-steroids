@@ -6,27 +6,35 @@ template <typename arrType>
 class AOS //AOS = array on steroids
 {
 private:
-	size_t size;
+	size_t vsize;
 
 public:
 	arrType* data;
 
 	void init(size_t nSize)
 	{
-		size = nSize;
+		vsize = nSize;
 		data = (arrType*)malloc(sizeof(arrType) * nSize);
+		for (size_t i = 0; i < nSize; ++i) data[i] = arrType(NULL);
+	}
+
+	void init(size_t nSize, arrType defaultVal)
+	{
+		vsize = nSize;
+		data = (arrType*)malloc(sizeof(arrType) * nSize);
+		for (size_t i = 0; i < nSize; ++i) data[i] = arrType(defaultVal);
 	}
 
 	void resize(size_t nSize)
 	{
-		if (nSize != size)
+		if (nSize != vsize)
 		{
 			arrType* newData = (arrType*)realloc(data, sizeof(arrType) * nSize);
 			if (newData) //realloc succeded!! :)
 			{
-				if (nSize > size) for (size_t i = size; i < nSize; ++i) newData[i] = arrType();
+				if (nSize > vsize) for (size_t i = vsize; i < nSize; ++i) newData[i] = arrType(NULL);
 				data = newData;
-				size = nSize;
+				vsize = nSize;
 			}
 			else std::cout << "[ | AOS-LOG ]: AOS::resize(size_t) failed, keeping old array.\n"; //if failed :(
 		}
@@ -38,7 +46,7 @@ public:
 		data = nullptr;
 	}
 
-	size_t getSize() { return size; }
+	size_t size() { return vsize; }
 
 	AOS(size_t nSize) { init(nSize); };
 	AOS() {} ;
