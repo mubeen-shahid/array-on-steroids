@@ -16,9 +16,9 @@ int main()
 			for (size_t column = 0; column < aSize; ++column) 
 			{
 				myArray[row][column] = row * column; //assign unique value. It would not crash, because AOS auto-inits to zero if not value was provided
-				std::cout << myArray[row][column] << " | "; // std::cout << myArray.data[row].data[column] would also work, operator was overloaded
+				std::printf("%d | ", myArray[row][column]); // std::cout << myArray.data[row].data[column] would also work, operator was overloaded
 			}
-			std::cout << "\n-----------\n";
+			std::printf("\n-----------\n");
 		}
 	}
 	
