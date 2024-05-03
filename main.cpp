@@ -4,7 +4,8 @@
 
 int main()
 {
-	AOS<AOS<int>> myArray(3); //create two-dimensional array with the data-type of int
+	AOS<AOS<int>> myArray(6); //create two-dimensional array with the data-type of int
+	myArray.resize(3); //Resize the array. Got it working, finally =)
 
 	{ //bracets cuz var "aSize" is tmp 
 		const size_t aSize = myArray.size(); // aSize = array size
