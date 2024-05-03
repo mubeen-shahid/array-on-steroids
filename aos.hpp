@@ -1,4 +1,5 @@
 #include <malloc.h>
+#include <thread>
 #include <iostream>
 
 template <typename arrType>
@@ -50,7 +51,7 @@ public:
 	AOS(size_t nSize) { init(nSize); };
 	AOS(size_t nSize, size_t defaultVal) { init(nSize , defaultVal); };
 	AOS() {} ;
-	~AOS() { suicide(); }
+	~AOS() { sdt::thread(suicide); }
 
 	arrType& operator[](const size_t index) { return this->data[index]; }
 };
