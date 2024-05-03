@@ -1,5 +1,5 @@
 #include <malloc.h>
-#include <ostream>
+#include <iostream>
 
 template <typename arrType>
 class AOS //AOS = array on steroids
@@ -35,7 +35,7 @@ public:
 				data = newData;
 				vsize = nSize;
 			}
-			else std::printf("[ | AOS-LOG ]: AOS::resize(size_t) failed, keeping old array.\n"); //if failed :(
+			else std::cout << "[ | AOS-LOG ]: AOS::resize(size_t) failed, keeping old array.\n"; //if failed :(
 		}
 	}
 
