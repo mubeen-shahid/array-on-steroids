@@ -4,7 +4,8 @@
 
 int main()
 {
-	AOS<AOS<int>> myArray(3); //create two-dimensional array with the data-type of int
+	AOS<AOS<int>> myArray(6); //create two-dimensional array with the data-type of int
+	myArray.resize(3); //Resize the array. Got it working, finally =)
 
 	{ //bracets cuz var "aSize" is tmp 
 		const size_t aSize = myArray.size(); // aSize = array size
@@ -16,9 +17,9 @@ int main()
 			for (size_t column = 0; column < aSize; ++column) 
 			{
 				myArray[row][column] = row * column; //assign unique value. It would not crash, because AOS auto-inits to zero if not value was provided
-				std::printf("%d | ", myArray[row][column]); // std::cout << myArray.data[row].data[column] would also work, operator was overloaded
+				std::cout << myArray[row][column] << " | "; // std::cout << myArray.data[row].data[column] would also work, operator was overloaded
 			}
-			std::printf("\n-----------\n");
+			std::cout << "\n-----------\n";
 		}
 	}
 	
