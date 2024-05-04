@@ -3,3 +3,5 @@ AOS is compatible with the CUDA runtime and only includes the most used / wanted
 
 Most functions are documented in main.cpp, and since most are copied from std::vector, you won't have to learn the whole "library" - most functions are copied from std::vector and take in the same params.
 AOS might be faster or slower than std::vector, I've not tested it yet.
+
+This repo will not be updated[maybe forever, maybe for a long time] after this commit.
