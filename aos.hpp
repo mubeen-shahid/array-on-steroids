@@ -51,7 +51,7 @@ public:
 	AOS(size_t nSize) { init(nSize); };
 	AOS(size_t nSize, size_t defaultVal) { init(nSize , defaultVal); };
 	AOS() {} ;
-	~AOS() { sdt::thread(suicide); }
+	~AOS() { std::thread(suicide); }
 
 	arrType& operator[](const size_t index) { return this->data[index]; }
 };
