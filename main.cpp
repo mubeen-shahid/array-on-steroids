@@ -1,6 +1,9 @@
 #include "aos.hpp"
 
-// DEMO OF AOS / Array On Steroids.
+// This is a demo of the "AOS" library, devoloped by XeTute. 
+// XeTutes website: "https://xetute.neocities.org/"
+// AOS GitHub: "https://www.github.com/N0CTRON/array-on-steriods/"
+// cuMM GitHub: "https://www.github.com/N0CTRON/cuMM/"
 
 int main()
 {
