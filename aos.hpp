@@ -31,7 +31,7 @@ public:
 			arrType* newData = (arrType*)realloc(data, sizeof(arrType) * nSize);
 			if (newData) //realloc succeded!! :)
 			{
-				if (nSize > vsize) for (std::uint64_t i = vsize; i < nSize; ++i) newData[i] = arrType(NULL);
+				for (std::uint64_t i = vsize; i < nSize; ++i) newData[i] = arrType(NULL);
 				data = newData;
 				vsize = nSize;
 			}
