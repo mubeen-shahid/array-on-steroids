@@ -1,4 +1,5 @@
 #include <malloc.h>
+#include <iostream>
 #include <thread>
 
 template <typename arrType>
@@ -13,15 +14,25 @@ public:
 	void init(std::uint64_t nSize)
 	{
 		vsize = nSize;
-		data = (arrType*)malloc((std::uint64_t)sizeof(arrType) * nSize);
-		for (std::uint64_t i = 0; i < nSize; ++i) this->data[i] = arrType(NULL);
+		data = (arrType*)malloc(sizeof(arrType) * nSize);
+		if (!data)
+		{
+			std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, line 20." << std::endl;
+			return;
+		}
+		for (std::uint64_t i = 0; i < nSize; ++i) this->data[i] = arrType();
 	}
 
 	void init(std::uint64_t nSize, arrType defaultVal)
 	{
 		vsize = nSize;
-		data = (arrType*)malloc((std::uint64_t)sizeof(arrType) * nSize);
-		for (std::uint64_t i = 0; i < nSize; ++i) this->data[i] = (arrType)defaultVal;
+		data = (arrType*)malloc(sizeof(arrType) * nSize);
+		if (!data)
+		{
+			std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, line 32." << std::endl;
+			return;
+		}
+		for (std::uint64_t i = 0; i < nSize; ++i) this->data[i] = defaultVal;
 	}
 
 	void resize(std::uint64_t nSize)
@@ -31,11 +42,11 @@ public:
 			arrType* newData = (arrType*)realloc(data, sizeof(arrType) * nSize);
 			if (newData) //realloc succeded!! :)
 			{
-				for (std::uint64_t i = vsize; i < nSize; ++i) newData[i] = arrType(NULL);
+				for (std::uint64_t i = vsize; i < nSize; ++i) newData[i] = arrType();
 				data = newData;
 				vsize = nSize;
 			}
-			else std::printf("[ | AOS-LOG ]: AOS::resize(std::uint64_t) failed, keeping old array.\n"); //if failed :(
+			else std::cerr << "[ | AOS-LOG ]: AOS::resize(std::uint64_t) failed, keeping old array." << std::endl; //if failed :(
 		}
 	}
 
@@ -44,7 +55,7 @@ public:
 		free(data);
 		data = nullptr;
 	}
-	
+
 	std::uint64_t size() { return vsize; }
 
 	AOS(std::initializer_list<arrType> list)
@@ -62,7 +73,7 @@ public:
 	AOS& operator=(std::initializer_list<arrType> list)
 	{
 		vsize = list.size();
-		data = (arrType*)malloc((std::uint64_t)sizeof(arrType) * vsize);
+		data = (arrType*)malloc(sizeof(arrType) * vsize);
 		std::copy(list.begin(), list.end(), data);
 		return *this;
 	}
