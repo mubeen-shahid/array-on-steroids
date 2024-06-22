@@ -59,7 +59,7 @@ public:
 
     void suicide()
     {
-        delete[] data;
+        if (data) delete[] data;
         data = nullptr;
     }
 
