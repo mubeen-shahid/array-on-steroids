@@ -59,8 +59,11 @@ public:
 
     void suicide()
     {
-        if (data) delete[] data;
-        data = nullptr;
+        if (this->data)
+        {
+            delete[] this->data;
+            data = nullptr;
+        }
     }
 
     std::uint64_t size() const { return vsize; }
