@@ -14,7 +14,11 @@ public:
     void init(std::uint64_t nSize)
     {
         vsize = nSize;
-        try { data = new arrType[nSize]; }
+        try
+        {
+            delete[] data;
+            data = new arrType[nSize];
+        }
         catch (const std::bad_alloc& e)
         {
             std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, first init function.\n" << e.what() << std::endl;
@@ -26,7 +30,11 @@ public:
     void init(std::uint64_t nSize, arrType defaultVal)
     {
         vsize = nSize;
-        try { data = new arrType[nSize]; }
+        try
+        {
+            delete[] data;
+            data = new arrType[nSize];
+        }
         catch (const std::bad_alloc& e)
         {
             std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, second init function.\n" << e.what() << std::endl;
@@ -43,7 +51,7 @@ public:
             std::uint64_t minSize = std::min(vsize, nSize);
             std::copy(data, data + minSize, newData);
             std::fill(newData + minSize, newData + nSize, arrType());
-            delete[] data;
+            if (data) delete[] data;
             data = newData;
             vsize = nSize;
         }
@@ -63,17 +71,17 @@ public:
         data = new arrType[vsize];
         std::copy(list.begin(), list.end(), data);
     }
-
+    
     AOS(std::uint64_t nSize) { init(nSize); }
-
+    
     AOS(std::uint64_t nSize, arrType defaultVal) { init(nSize, defaultVal); }
-
+    
     AOS() : data(nullptr) {}
-
+    
     ~AOS() { delete[] data; }
 
     arrType& operator[](const std::uint64_t index) { return data[index]; }
-
+    
     AOS& operator=(const std::initializer_list<arrType> list)
     {
         if (data) delete[] data;
@@ -86,18 +94,6 @@ public:
         }
         std::copy(list.begin(), list.end(), data);
         return *this;
-    }
-
-    AOS(const AOS& other)
-    {
-        vsize = other.size();
-        data = new arrType[vsize];
-        if (!data)
-        {
-            std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp at AOS(const AOS&)." << std::endl;
-            exit(-1);
-        }
-        std::copy(other.data, other.data + vsize, data);
     }
 
     AOS& operator=(const AOS& other)
@@ -115,5 +111,17 @@ public:
             std::copy(other.data, other.data + vsize, data);
         }
         return *this;
+    }
+
+    AOS(const AOS& other)
+    {
+        vsize = other.size();
+        data = new arrType[vsize];
+        if (!data)
+        {
+            std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp at AOS(const AOS&)." << std::endl;
+            exit(-1);
+        }
+        std::copy(other.data, other.data + vsize, data);
     }
 };
