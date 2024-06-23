@@ -16,7 +16,7 @@ public:
         vsize = nSize;
         try
         {
-            delete[] data;
+            if (data) delete[] data;
             data = new arrType[nSize];
         }
         catch (const std::bad_alloc& e)
@@ -32,7 +32,7 @@ public:
         vsize = nSize;
         try
         {
-            delete[] data;
+            if (data) delete[] data;
             data = new arrType[nSize];
         }
         catch (const std::bad_alloc& e)
