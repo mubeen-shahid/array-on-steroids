@@ -18,13 +18,13 @@ public:
         {
             if (data) delete[] data;
             data = new arrType[nSize];
+            std::fill_n(data, nSize, arrType());
         }
         catch (const std::bad_alloc& e)
         {
             std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, first init function.\n" << e.what() << std::endl;
             exit(-1);
         }
-        std::fill_n(data, nSize, arrType());
     }
 
     void init(std::uint64_t nSize, arrType defaultVal)
@@ -34,13 +34,13 @@ public:
         {
             if (data) delete[] data;
             data = new arrType[nSize];
+            std::fill_n(data, nSize, defaultVal);
         }
         catch (const std::bad_alloc& e)
         {
             std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, second init function.\n" << e.what() << std::endl;
             exit(-1);
         }
-        std::fill_n(data, nSize, defaultVal);
     }
 
     void resize(std::uint64_t nSize)
@@ -128,3 +128,4 @@ public:
         std::copy(other.data, other.data + vsize, data);
     }
 };
+
