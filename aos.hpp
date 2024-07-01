@@ -57,6 +57,36 @@ public:
         }
     }
 
+    void random(AOS<float> range)
+    {
+        if (range.size() >= 2)
+        {
+            try
+            {
+                std::random_device rd;
+                if (range[0] > range[1])
+                {
+                    float tmp = range[0];
+                    range[0] = range[1];
+                    range[1] = tmp;
+                }
+                std::uniform_real_distribution<float> dist(range[0], range[1]);
+                auto thread_function = [&](std::uint64_t start, std::uint64_t end)
+                { for (std::uint64_t b = start; b < end; ++b) data[b] = (devType)dist(rd); };
+                std::uint64_t a = vsize / 2;
+
+                std::thread t1(thread_function, 0, a);
+                std::thread t2(thread_function, a, vsize);
+
+                t1.join();
+                t2.join();
+            }
+            catch (const std::exception& e)
+            { std::cout << "AOS threw exception at \"random\" function: " << e.what() << std::endl; }
+        }
+        else throw "AOS exceptioN at random: AOS<float>'s size is less than two.\n";
+    }
+
     void suicide()
     {
         if (this->data)
