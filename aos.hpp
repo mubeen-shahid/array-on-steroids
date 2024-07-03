@@ -197,6 +197,16 @@ public:
         }
     }
 
+    AOS operator%(const AOS& other)
+    {
+        if (other.size() == vsize)
+        {
+            AOS<arrType> nList(vsize);
+            for (std::uint64_t i = 0; i < vsize; ++i) nList[i] = this->data[i] % other.data[i];
+            return nList;
+        }
+    }
+
     AOS(const AOS& other)
     {
         vsize = other.size();
