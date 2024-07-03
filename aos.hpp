@@ -8,6 +8,7 @@ class AOS // AOS = array on steroids
 {
 private:
     std::uint64_t vsize = 0;
+    std::uint64_t threads = 2;
 
 public:
     arrType* data = nullptr;
@@ -55,6 +56,8 @@ public:
         std::fill_n(data, nSize, defaultVal);
     }
 
+    void setThreads(std::uint64_t nThreads) { threads = nThreads; }
+
     void resize(std::uint64_t nSize)
     {
         if (nSize != vsize)
@@ -84,21 +87,25 @@ public:
                 }
                 std::uniform_real_distribution<float> dist(range[0], range[1]);
                 auto thread_function = [&](std::uint64_t start, std::uint64_t end)
-                { for (std::uint64_t b = start; b < end; ++b) data[b] = (arrType)dist(rd); };
-                std::uint64_t a = vsize / 2;
+                    { for (std::uint64_t b = start; b < end; ++b) data[b] = (arrType)dist(rd); };
 
-                std::thread t1(thread_function, 0, a);
-                std::thread t2(thread_function, a, vsize);
+                std::vector<std::thread> thread_pool;
+                std::uint64_t chunk_size = vsize / threads;
+                std::uint64_t remainder = vsize % threads;
+                std::uint64_t start = 0;
 
-                t1.join();
-                t2.join();
+                for (std::uint64_t i = 0; i < threads; ++i)
+                {
+                    std::uint64_t end = start + chunk_size + (i < remainder ? 1 : 0);
+                    thread_pool.emplace_back(thread_function, start, end);
+                    start = end;
+                }
+                for (auto& t : thread_pool) { t.join(); }
             }
             catch (const std::exception& e)
-            {
-                std::cout << "AOS threw exception at \"random\" function: " << e.what() << std::endl;
-            }
+            { std::cout << "AOS threw exception at \"random\" function: " << e.what() << std::endl; }
         }
-        else throw "AOS exceptioN at random: AOS<float>'s size is less than two.\n";
+        else throw "AOS exception at random: AOS<float>'s size is less than two.\n";
     }
 
     std::uint64_t size() const { return vsize; }
