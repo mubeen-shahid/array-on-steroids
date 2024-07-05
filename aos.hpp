@@ -164,54 +164,123 @@ public:
         return *this;
     }
 
-    AOS operator+(const AOS& other)
+    AOS operator+(const AOS& other) const
     {
         if (other.size() == vsize)
         {
             AOS<arrType> nList(vsize);
-            for (std::uint64_t i = 0; i < vsize; ++i) nList[i] = this->data[i] + other.data[i];
+            std::vector<std::thread> thread_pool;
+
+            auto worker = [&](std::uint64_t start, std::uint64_t end)
+            { for (std::uint64_t i = start; i < end; ++i) nList[i] = this->data[i] + other.data[i]; };
+
+            std::uint64_t chunk_size = vsize / threads;
+            for (std::uint64_t t = 0; t < threads; ++t)
+            {
+                std::uint64_t start = t * chunk_size;
+                std::uint64_t end = (t == threads - 1) ? vsize : (t + 1) * chunk_size;
+                thread_pool.emplace_back(worker, start, end);
+            }
+            for (auto& thread : thread_pool) thread.join();
             return nList;
         }
+        throw std::runtime_error("Sizes don't match");
     }
 
-    AOS operator-(const AOS& other)
+    AOS operator-(const AOS& other) const
     {
         if (other.size() == vsize)
         {
             AOS<arrType> nList(vsize);
-            for (std::uint64_t i = 0; i < vsize; ++i) nList[i] = this->data[i] - other.data[i];
+            std::vector<std::thread> thread_pool;
+
+            auto worker = [&](std::uint64_t start, std::uint64_t end)
+            { for (std::uint64_t i = start; i < end; ++i) nList[i] = this->data[i] - other.data[i]; };
+
+            std::uint64_t chunk_size = vsize / threads;
+            for (std::uint64_t t = 0; t < threads; ++t)
+            {
+                std::uint64_t start = t * chunk_size;
+                std::uint64_t end = (t == threads - 1) ? vsize : (t + 1) * chunk_size;
+                thread_pool.emplace_back(worker, start, end);
+            }
+            for (auto& thread : thread_pool) thread.join();
+
             return nList;
         }
+        throw std::runtime_error("Sizes don't match");
     }
 
-    AOS operator*(const AOS& other)
+    AOS operator*(const AOS& other) const
     {
         if (other.size() == vsize)
         {
             AOS<arrType> nList(vsize);
-            for (std::uint64_t i = 0; i < vsize; ++i) nList[i] = this->data[i] * other.data[i];
+            std::vector<std::thread> thread_pool;
+
+            auto worker = [&](std::uint64_t start, std::uint64_t end)
+            { for (std::uint64_t i = start; i < end; ++i) nList[i] = this->data[i] * other.data[i]; };
+
+            std::uint64_t chunk_size = vsize / threads;
+            for (std::uint64_t t = 0; t < threads; ++t)
+            {
+                std::uint64_t start = t * chunk_size;
+                std::uint64_t end = (t == threads - 1) ? vsize : (t + 1) * chunk_size;
+                thread_pool.emplace_back(worker, start, end);
+            }
+            for (auto& thread : thread_pool) thread.join();
+
             return nList;
         }
+        throw std::runtime_error("Sizes don't match");
     }
 
-    AOS operator/(const AOS& other)
+    AOS operator/(const AOS& other) const
     {
         if (other.size() == vsize)
         {
             AOS<arrType> nList(vsize);
-            for (std::uint64_t i = 0; i < vsize; ++i) nList[i] = this->data[i] / other.data[i];
+            std::vector<std::thread> thread_pool;
+
+            auto worker = [&](std::uint64_t start, std::uint64_t end)
+            { for (std::uint64_t i = start; i < end; ++i) nList[i] = this->data[i] / other.data[i]; };
+
+            std::uint64_t chunk_size = vsize / threads;
+            for (std::uint64_t t = 0; t < threads; ++t)
+            {
+                std::uint64_t start = t * chunk_size;
+                std::uint64_t end = (t == threads - 1) ? vsize : (t + 1) * chunk_size;
+                thread_pool.emplace_back(worker, start, end);
+            }
+            for (auto& thread : thread_pool) thread.join();
+
             return nList;
         }
+        throw std::runtime_error("Sizes don't match");
     }
 
-    AOS operator%(const AOS& other)
+    AOS operator%(const AOS& other) const
     {
         if (other.size() == vsize)
         {
             AOS<arrType> nList(vsize);
-            for (std::uint64_t i = 0; i < vsize; ++i) nList[i] = this->data[i] % other.data[i];
+            std::vector<std::thread> thread_pool;
+
+            auto worker = [&](std::uint64_t start, std::uint64_t end)
+            { for (std::uint64_t i = start; i < end; ++i) nList[i] = this->data[i] % other.data[i]; };
+
+            std::uint64_t chunk_size = vsize / threads;
+            for (std::uint64_t t = 0; t < threads; ++t)
+            {
+                std::uint64_t start = t * chunk_size;
+                std::uint64_t end = (t == threads - 1) ? vsize : (t + 1) * chunk_size;
+                thread_pool.emplace_back(worker, start, end);
+            }
+            for (auto& thread : thread_pool) thread.join();
+
             return nList;
         }
+        throw std::runtime_error("Sizes don't match");
     }
 
     AOS(const AOS& other)
