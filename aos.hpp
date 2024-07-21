@@ -8,7 +8,7 @@ class AOS // AOS = array on steroids
 {
 private:
     std::uint64_t vsize = 0;
-    std::uint64_t threads = 2;
+    std::uint64_t threads = 6;
 
 public:
     arrType* data = nullptr;
@@ -29,15 +29,15 @@ public:
         vsize = nSize;
         try
         {
-            if (data) delete[] data;
+            if (data == nullptr) delete[] data;
             data = new arrType[nSize];
+            std::fill_n(data, nSize, arrType());
         }
         catch (const std::bad_alloc& e)
         {
-            std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, first init function.\n" << e.what() << std::endl;
+            throw std::runtime_error("[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, first init function.\n" + *e.what());
             exit(-1);
         }
-        std::fill_n(data, nSize, arrType());
     }
 
     void init(std::uint64_t nSize, arrType defaultVal)
@@ -45,18 +45,18 @@ public:
         vsize = nSize;
         try
         {
-            if (data) delete[] data;
+            if (data == nullptr) delete[] data;
             data = new arrType[nSize];
+            std::fill_n(data, nSize, defaultVal);
         }
         catch (const std::bad_alloc& e)
         {
-            std::cerr << "[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, second init function.\n" << e.what() << std::endl;
+            throw std::runtime_error(std::string("[ | AOS-LOG ]: Failed to allocate memory for array at aos.hpp, second init function.\n" + *e.what()).c_str());
             exit(-1);
         }
-        std::fill_n(data, nSize, defaultVal);
     }
 
-    void setThreads(std::uint64_t nThreads) { threads = nThreads; }
+    void setThreads(std::uint64_t nThreads) { this->threads = nThreads; }
 
     void resize(std::uint64_t nSize)
     {
@@ -87,7 +87,7 @@ public:
                 }
                 std::uniform_real_distribution<float> dist(range[0], range[1]);
                 auto thread_function = [&](std::uint64_t start, std::uint64_t end)
-                    { for (std::uint64_t b = start; b < end; ++b) data[b] = (arrType)dist(rd); };
+                { for (std::uint64_t b = start; b < end; ++b) data[b] = (arrType)dist(rd); };
 
                 std::vector<std::thread> thread_pool;
                 std::uint64_t chunk_size = vsize / threads;
@@ -103,21 +103,40 @@ public:
                 for (auto& t : thread_pool) { t.join(); }
             }
             catch (const std::exception& e)
-            { std::cout << "AOS threw exception at \"random\" function: " << e.what() << std::endl; }
+            { throw std::runtime_error(std::string("AOS threw exception at \"random\" function: " + *e.what()).c_str()); }
         }
-        else throw "AOS exception at random: AOS<float>'s size is less than two.\n";
+        else throw std::runtime_error("AOS exception at random: AOS<float>'s size is less than two.");
     }
 
     std::uint64_t size() const { return vsize; }
 
-    arrType dot(AOS<arrType> other)
+    arrType dot(const AOS<arrType>& other) const
     {
-        if (other.size() == vsize)
+        if (other.size() != vsize) throw std::runtime_error("Sizes don't match for dot product");
+
+        arrType result = 0;
+        std::vector<arrType> partial_results(threads, 0);
+        std::vector<std::thread> thread_pool;
+
+        auto worker = [&](std::uint64_t start, std::uint64_t end, std::uint64_t thread_id)
         {
-            arrType result = 0.0f;
-            for (std::uint64_t i = 0; i < vsize; ++i) result += this->data[i] * other.data[i];
-            return result;
+            arrType local_sum = 0;
+            for (std::uint64_t i = start; i < end; ++i) local_sum += this->data[i] * other.data[i];
+            partial_results[thread_id] = local_sum;
+        };
+
+        std::uint64_t chunk_size = vsize / threads;
+        for (std::uint64_t t = 0; t < threads; ++t)
+        {
+            std::uint64_t start = t * chunk_size;
+            std::uint64_t end = (t == threads - 1) ? vsize : (t + 1) * chunk_size;
+            thread_pool.emplace_back(worker, start, end, t);
         }
+
+        for (auto& thread : thread_pool) thread.join();
+        for (const auto& partial : partial_results) result += partial;
+
+        return result;
     }
 
     void suicide()
@@ -129,7 +148,7 @@ public:
         }
     }
 
-    ~AOS() { delete[] data; }
+    ~AOS() { if (data == nullptr) delete[] data; }
 
     arrType& operator[](const std::uint64_t index) { return data[index]; }
     
