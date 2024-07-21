@@ -152,8 +152,11 @@ public:
 
     arrType& operator[](const std::uint64_t index)
     {
-        if (index < vsize) return data[index];
-        else throw std::runtime_error("Array subscript out of range.");
+#ifdef DEBUG
+        if (index >= vsize) throw std::runtime_error("Array subscript out of range: index was " + std::to_string(index) + ", max_size was " + std::to_string(vsize) + ".");
+#endif // DEBUG
+
+        return data[index];
     }
     
     AOS& operator=(const std::initializer_list<arrType> list)
