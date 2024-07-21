@@ -150,7 +150,11 @@ public:
 
     ~AOS() { if (data == nullptr) delete[] data; }
 
-    arrType& operator[](const std::uint64_t index) { return data[index]; }
+    arrType& operator[](const std::uint64_t index)
+    {
+        if (index < vsize) return data[index];
+        else throw std::runtime_error("Array subscript out of range.");
+    }
     
     AOS& operator=(const std::initializer_list<arrType> list)
     {
