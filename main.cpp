@@ -5,26 +5,26 @@
 
 int main()
 {
-	AOS<AOS<int>> myArray(6); //create two-dimensional array with the data-type of int
-	myArray.resize(3); //Resize the array. Got it working, finally =)
+	constexpr std::uint64_t elems = 10000000; // 10 000 000
+	const std::uint64_t threads = std::thread::hardware_concurrency(); // Get num of physical threads on CPU
 
-	{ //bracets cuz var "aSize" is tmp 
-		const size_t aSize = myArray.size(); // aSize = array size
-		for (size_t row = 0; row < aSize; ++row) //init each element
-		{
-			myArray[row].init(aSize, 9);
-			//myArray[row].init(aSize); <-- This line would automatically set every value to "NULL" / 0. Nice, right? :3
+	AOS<int> a(elems); // 10.000.000
+	AOS<int> b(elems);
+	AOS<int> c(elems);
 
-			for (size_t column = 0; column < aSize; ++column) 
-			{
-				myArray[row][column] = row * column; //assign unique value. It would not crash, because AOS auto-inits to zero if not value was provided
-				std::cout << myArray[row][column] << " | "; // std::cout << myArray.data[row].data[column] would also work, operator was overloaded
-			}
-			std::cout << "\n-----------\n";
-		}
-	}
-	
-	myArray.suicide(); //Let the array kill itself. This prevents memory leaks
+	a.setThreads(threads);
+	b.setThreads(threads);
+	c.setThreads(threads);
 
+	timePoint start = std::chrono::high_resolution_clock::now();
+
+	a.random(AOS<float>({ -10, 10 }));
+	b.random(AOS<float>({ -10, 10 }));
+
+	c = a + b;
+
+	timePoint end = std::chrono::high_resolution_clock::now();
+
+	std::cout << "Took " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms.\n";
 	return 0;
 }
